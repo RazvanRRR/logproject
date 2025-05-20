@@ -1,6 +1,8 @@
 import re
 from datetime import datetime
 import logging
+import argparse
+import os.path
 
 # Configure logging
 logging.basicConfig(
@@ -103,9 +105,27 @@ class LogMonitor:
         self.process_logs()
         self.calculate_durations()
         self.save_results()
-        logging.info(f"Log monitoring complete.")
+        logging.info(f"Log monitoring complete. Results saved to job_durations.csv")
+
+
+def parse_arguments():
+    """Parse command line arguments"""
+    parser = argparse.ArgumentParser(description='Monitor job durations in log files')
+    
+    parser.add_argument('log_file', help='Path to the log file to process')
+    
+    args = parser.parse_args()
+    
+    # Validate that the log file exists
+    if not os.path.isfile(args.log_file):
+        parser.error(f"Log file not found: {args.log_file}")
+    
+    return args
 
 
 if __name__ == "__main__":
-    monitor = LogMonitor("logs.log")
+    args = parse_arguments()
+    
+    # Create and run monitor with command line arguments
+    monitor = LogMonitor(log_file=args.log_file)
     monitor.run()
