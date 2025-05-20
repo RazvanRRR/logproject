@@ -1,0 +1,20 @@
+Type,PID,Job Name,Duration
+ERROR,81258,background job wmy,0:14:46
+ERROR,45135,scheduled task 515,0:12:23
+ERROR,39547,scheduled task 051,0:11:29
+WARNING,87228,scheduled task 268,0:09:28
+ERROR,70808,scheduled task 182,0:33:43
+WARNING,71766,scheduled task 074,0:05:47
+WARNING,50295,scheduled task 811,0:06:35
+WARNING,27222,scheduled task 294,0:06:08
+ERROR,39860,scheduled task 460,0:19:52
+WARNING,87570,scheduled task 794,0:07:53
+ERROR,85742,scheduled task 064,0:12:17
+ERROR,22003,scheduled task 004,0:11:13
+WARNING,99672,background job sqm,0:05:13
+WARNING,86716,background job xfg,0:05:34
+ERROR,52532,background job tqc,0:13:53
+WARNING,98746,scheduled task 746,0:07:17
+ERROR,23703,scheduled task 374,0:13:26
+ERROR,62401,scheduled task 936,0:10:24
+WARNING,24482,scheduled task 672,0:08:36

@@ -44,13 +44,11 @@ class LogMonitor:
         
         if match:
             timestamp_str, job_description, status, pid = match.groups()
-            # Create a job key combining PID and job name to handle cases where PIDs might be reused
-            job_key = f"{pid}_{job_description.strip()}"
             
             # Parse timestamp
             timestamp = datetime.strptime(timestamp_str, "%H:%M:%S")
             
-            return timestamp, job_description.strip(), status, pid, job_key
+            return timestamp, job_description.strip(), status, pid
         return None
 
     def process_logs(self):
@@ -61,27 +59,39 @@ class LogMonitor:
             for line in file:
                 parsed = self.parse_log_line(line.strip())
                 if parsed:
-                    timestamp, job_description, status, pid, job_key = parsed
+                    timestamp, job_description, status, pid = parsed
                     
-                    if job_key not in self.jobs:
-                        self.jobs[job_key] = {'description': job_description, 'pid': pid}
+                    if pid not in self.jobs:
+                        self.jobs[pid] = {'description': job_description}
                     
                     if status == "START":
-                        self.jobs[job_key]['start'] = timestamp
+                        self.jobs[pid]['start'] = timestamp
                     elif status == "END":
-                        self.jobs[job_key]['end'] = timestamp
+                        self.jobs[pid]['end'] = timestamp
+                
     def calculate_durations(self):
         """
         Calculate the duration of each job and store it in self.job_durations
         """
-        for job_key, job_info in self.jobs.items():
+        for pid, job_info in self.jobs.items():
             if 'start' in job_info and 'end' in job_info:
                 duration = job_info['end'] - job_info['start']
-                self.job_durations[job_key] = duration
-                print(self.job_durations[job_key])
-        
-    
-            
+                self.job_durations[pid] = duration
+                
+                
+    def save_results(self):
+        """
+        Save the results to a CSV file
+        """
+        with open("job_durations.csv", "w") as file:
+            file.write("Type,PID,Job Name,Duration\n")
+            for pid, duration in self.job_durations.items():
+                
+                duration_seconds = duration.total_seconds()
+                if self.error_threshold > duration_seconds > self.warning_threshold :
+                    file.write(f"WARNING,{pid},{self.jobs[pid]['description']},{duration}\n")
+                elif duration_seconds > self.error_threshold:
+                    file.write(f"ERROR,{pid},{self.jobs[pid]['description']},{duration}\n")
 
     
 
@@ -92,6 +102,7 @@ class LogMonitor:
         logging.info(f"Starting log monitoring of {self.log_file}")
         self.process_logs()
         self.calculate_durations()
+        self.save_results()
         logging.info(f"Log monitoring complete.")
 
 
