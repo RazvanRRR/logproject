@@ -60,7 +60,6 @@ class LogMonitor:
         with open(self.log_file, "r") as file:
             for line in file:
                 parsed = self.parse_log_line(line.strip())
-                print(parsed)
                 if parsed:
                     timestamp, job_description, status, pid, job_key = parsed
                     
@@ -71,8 +70,19 @@ class LogMonitor:
                         self.jobs[job_key]['start'] = timestamp
                     elif status == "END":
                         self.jobs[job_key]['end'] = timestamp
-
+    def calculate_durations(self):
+        """
+        Calculate the duration of each job and store it in self.job_durations
+        """
+        for job_key, job_info in self.jobs.items():
+            if 'start' in job_info and 'end' in job_info:
+                duration = job_info['end'] - job_info['start']
+                self.job_durations[job_key] = duration
+                print(self.job_durations[job_key])
         
+    
+            
+
     
 
     def run(self):
@@ -81,6 +91,7 @@ class LogMonitor:
         """
         logging.info(f"Starting log monitoring of {self.log_file}")
         self.process_logs()
+        self.calculate_durations()
         logging.info(f"Log monitoring complete.")
 
 
